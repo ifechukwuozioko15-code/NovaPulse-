@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>NovaPulse</title><meta name="google-adsense-account" content="ca-pub-5643841764289125">
+  <title>NovaPulse</title>
+  <meta name="google-adsense-account" content="ca-pub-5643841764289125">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   <!-- Firebase -->
@@ -617,7 +618,12 @@ auth.onAuthStateChanged(user => {
 function loadWallet(uid, email) {
   const ref = db.ref('users/' + uid);
   ref.once('value').then(snap => {
-    if (!snap.val()) ref.set({ usd: 10000, btc: 0, eth: 0, email });
+    const d = snap.val();
+    if (!d) {
+      ref.set({ usd: 10000, btc: 0, eth: 0, email });
+    } else if ((d.usd === 0 || !d.usd) && (d.btc === 0 || !d.btc) && (d.eth === 0 || !d.eth)) {
+      ref.update({ usd: 10000, email });
+    }
   });
   const handler = ref.on('value', snap => {
     const d = snap.val();
